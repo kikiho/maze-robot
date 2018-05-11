@@ -1,0 +1,85 @@
+#define MOTOR_A_1A 9   // blue
+#define MOTOR_A_1B 10  // orange
+#define MOTOR_B_1A 6 // purple 
+#define MOTOR_B_1B 7 // yellow
+#include <NewPing.h>
+
+#define TRIGGER_RIGHT 11 //right - green
+#define ECHO_RIGHT 12 // right - white
+
+#define TRIGGER_FRONT 4 // front - blue
+#define ECHO_FRONT 5 // front - purple
+
+#define TRIGGER_LEFT 2 // left - yellow
+#define ECHO_LEFT 3 // left- orange
+
+
+#define MAX_DISTANCE 200
+#define THRESHOLD 7
+#define FRONTTHRESHOLD 12
+#define RIGHTTHRESHOLD 12
+#define LEFTTHRESHOLD 12
+#define TIME 2
+NewPing rightsonar(TRIGGER_RIGHT, ECHO_RIGHT, MAX_DISTANCE);
+NewPing leftsonar(TRIGGER_LEFT, ECHO_LEFT, MAX_DISTANCE);
+NewPing frontsonar(TRIGGER_FRONT, ECHO_FRONT, MAX_DISTANCE);
+
+
+void setup() {
+  Serial.begin(115200);
+  // Motor pins need to be OUTPUT.
+  pinMode(MOTOR_A_1A, OUTPUT);
+  pinMode(MOTOR_A_1B, OUTPUT);
+  pinMode(MOTOR_B_1A, OUTPUT);
+  pinMode(MOTOR_B_1B, OUTPUT);
+}
+
+void wheelForwards() {
+  analogWrite(MOTOR_A_1A, 100);
+  analogWrite(MOTOR_A_1B, LOW);
+  analogWrite(MOTOR_B_1A, 200);
+  analogWrite(MOTOR_B_1B, LOW);
+  }
+}
+
+void wheelBackwards() {
+  analogWrite(MOTOR_A_1A, LOW);
+  analogWrite(MOTOR_A_1B, 100);
+  analogWrite(MOTOR_B_1A, LOW);
+  analogWrite(MOTOR_B_1B, 200);
+}
+
+void wheelStop() {
+  analogWrite(MOTOR_A_1A, LOW);
+  analogWrite(MOTOR_A_1B, LOW);
+  analogWrite(MOTOR_B_1A, LOW);
+  analogWrite(MOTOR_B_1B, LOW);
+}
+
+void turnRight() {
+  analogWrite(MOTOR_A_1A, 100);
+  analogWrite(MOTOR_A_1B, LOW);
+  analogWrite(MOTOR_B_1A, LOW);
+  analogWrite(MOTOR_B_1B, LOW);
+}
+
+void turnLeft() {
+  analogWrite(MOTOR_A_1A, LOW);
+  analogWrite(MOTOR_A_1B, LOW);
+  analogWrite(MOTOR_B_1A, 200);
+  analogWrite(MOTOR_B_1B, LOW);
+}
+
+void loop() {
+  if (rightsonar.ping_cm() < RIGHTTHRESHOLD && leftsonar.ping_cm() < LEFTTHRESHOLD && frontsonar.ping_cm() > FRONTTRESHOLD) {
+    wheelForwards();
+  }
+
+  if (rightsonar.ping_cm() < RIGHTTHRESHOLD && leftsonar.ping_cm() > LEFTTHRESHOLD && frontsonar.ping_cm() < FRONTTRESHOLD) {
+    turnLeft();
+  }
+
+  if (rightsonar.ping_cm() > RIGHTTHRESHOLD && leftsonar.ping_cm() < LEFTTHRESHOLD && frontsonar.ping_cm() < FRONTTHRESHOLD) {
+    turnRight();
+  }
+}
